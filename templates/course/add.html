@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Add Course{% endblock %}
+
+{% block content %}
+    <h2>Add New Course</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="title">Course Title:</label>
+        <input type="text" id="title" name="title" required><br>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" required></textarea><br>
+
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required><br>
+
+        <button type="submit">Add Course</button>
+    </form>
+    <a href="{% url 'course_list' %}">Back to Courses</a>
+{% endblock %}

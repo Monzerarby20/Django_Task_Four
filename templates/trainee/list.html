@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Trainees{% endblock %}
+{% block content %}
+    <h2>Trainee List</h2>
+    <ul>
+        {% for trainee in trainees %}
+            <li>{{ trainee.name }} - {{ trainee.email }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_trainee' %}">Add Trainee</a>
+{% endblock %}
