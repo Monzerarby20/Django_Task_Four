@@ -1,11 +1,30 @@
-{% extends 'base.html' %}
-{% block title %}Courses{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Course List{% endblock %}
+
 {% block content %}
-    <h2>Course List</h2>
-    <ul>
+<h2 class="mb-3">Available Courses</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Start Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for course in courses %}
-            <li>{{ course.title }} - {{ course.start_date }}</li>
+        <tr>
+            <td>{{ course.title }}</td>
+            <td>{{ course.description }}</td>
+            <td>{{ course.start_date }}</td>
+            <td>
+                <a href="{% url 'update_course' course.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'delete_course' course.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
-    <a href="{% url 'add_course' %}">Add Course</a>
+    </tbody>
+</table>
 {% endblock %}

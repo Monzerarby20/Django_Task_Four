@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Trainee{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title text-center">Update Trainee</h2>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.as_p }}
+                        </div>
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Update Trainee</button>
+                            <a href="{% url 'trainee_list' %}" class="btn btn-secondary">Back to Trainees</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
