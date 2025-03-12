@@ -1,23 +1,26 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Add Course{% endblock %}
+{% block title %}Add / Edit Course{% endblock %}
 
 {% block content %}
-<h2>Add a New Course</h2>
-<form method="POST">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <input type="text" class="form-control" name="title" required>
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Course</h4>
     </div>
-    <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" name="description" required></textarea>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="id_name" class="form-label">Course Name</label>
+                {{ form.name }}
+            </div>
+            <div class="mb-3">
+                <label for="id_description" class="form-label">Description</label>
+                {{ form.description }}
+            </div>
+            <button type="submit" class="btn btn-success">Save</button>
+            <a href="{% url 'course_list' %}" class="btn btn-secondary">Cancel</a>
+        </form>
     </div>
-    <div class="mb-3">
-        <label for="start_date" class="form-label">Start Date</label>
-        <input type="date" class="form-control" name="start_date" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Course</button>
-</form>
+</div>
 {% endblock %}

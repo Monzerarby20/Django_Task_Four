@@ -3,43 +3,42 @@
 {% block title %}Trainees{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Trainee List</h2>
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Image</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Age</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trainee in trainees %}
-                <tr>
-                    <td>
-                        {% if trainee.image %}
-                            <img src="{{ trainee.image.url }}" alt="{{ trainee.name }}" class="img-thumbnail" width="50">
-                        {% else %}
-                            <span class="text-muted">No Image</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ trainee.name }}</td>
-                    <td>{{ trainee.email }}</td>
-                    <td>{{ trainee.age }}</td>
-                    <td>
-                        <a href="{% url 'update_trainee' trainee.id %}" class="btn btn-sm btn-warning">Update</a>
-                        <a href="{% url 'delete_trainee' trainee.id %}" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="text-center mt-4">
-        <a href="{% url 'add_trainee' %}" class="btn btn-primary">Add Trainee</a>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Trainees</h2>
+    <a href="{% url 'add_trainee' %}" class="btn btn-success">+ Add Trainee</a>
 </div>
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Photo</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Course</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trainee in trainees %}
+        <tr>
+            <td>{{ trainee.id }}</td>
+            <td>
+                {% if trainee.image %}
+                    <img src="{{ trainee.image.url }}" alt="Trainee Photo" class="img-thumbnail" width="50" height="50">
+                {% else %}
+                    <span>No Image</span>
+                {% endif %}
+            </td>
+            <td>{{ trainee.name }}</td>
+            <td>{{ trainee.email }}</td>
+            <td>{{ trainee.course.name }}</td>
+            <td>
+                <a href="{% url 'update_trainee' trainee.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'delete_trainee' trainee.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
