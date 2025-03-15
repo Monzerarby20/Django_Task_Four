@@ -1,41 +1,56 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 from .models import Trainee
-from .forms import TraineeForm
-from course.models import Course  
-
-def trainee_list(request):
-    trainees = Trainee.objects.all()
-    return render(request, 'trainee/list.html', {'trainees': trainees})
-
-def add_trainee(request):
-    if request.method == 'POST':
-        form = TraineeForm(request.POST, request.FILES)  # ✅ Add request.FILES
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            email = form.cleaned_data['email']
-            course = form.cleaned_data['course']
-            image = form.cleaned_data.get('image')  # ✅ Get image from form
-            Trainee.objects.create(name=name, email=email, course=course, image=image)  # ✅ Save image
-            return redirect('trainee_list')
-    else:
-        form = TraineeForm()
-    return render(request, 'trainee/add.html', {'form': form})
-
-def update_trainee(request, trainee_id):
-    trainee = get_object_or_404(Trainee, id=trainee_id)
-    if request.method == 'POST':
-        form = TraineeForm(request.POST, request.FILES, instance=trainee)  
-        if form.is_valid():
-            form.save()  
-            return redirect('trainee_list')
-    else:
-        form = TraineeForm(instance=trainee)
-    return render(request, 'trainee/update.html', {'form': form})
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-def delete_trainee(request, trainee_id):
-    trainee = get_object_or_404(Trainee, id=trainee_id)
-    if request.method == 'POST':
-        trainee.delete()
-        return redirect('trainee_list')
-    return render(request, 'trainee/delete.html', {'trainee': trainee})
+
+
+class UserRegisterView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'trainee/register.html'
+    success_url = reverse_lazy('login')  
+
+
+class UserLoginView(LoginView):
+    template_name = 'trainee/login.html'
+
+
+class UserLogoutView(LogoutView):
+    next_page = 'login'  
+
+
+class TraineeListView(LoginRequiredMixin, ListView):
+    model = Trainee
+    template_name = 'trainee/list.html'
+    context_object_name = 'trainees'
+
+class TraineeListView(LoginRequiredMixin, ListView):
+    model = Trainee
+    template_name = 'trainee/list.html'
+    context_object_name = 'trainees'
+
+
+class TraineeCreateView(LoginRequiredMixin, CreateView):
+    model = Trainee
+    template_name = 'trainee/add.html'
+    fields = ['name', 'email', 'phone', 'course']
+    success_url = reverse_lazy('trainee_list')
+
+
+class TraineeUpdateView(LoginRequiredMixin, UpdateView):
+    model = Trainee
+    template_name = 'trainee/edit.html'
+    fields = ['name', 'email', 'phone', 'course']
+    success_url = reverse_lazy('trainee_list')
+
+
+class TraineeDeleteView(LoginRequiredMixin, DeleteView):
+    model = Trainee
+    template_name = 'trainee/delete.html'
+    success_url = reverse_lazy('trainee_list')

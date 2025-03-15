@@ -1,9 +1,21 @@
 from django.urls import path
-from .views import trainee_list, add_trainee, update_trainee, delete_trainee
+from .views import (
+    TraineeListView,
+    TraineeCreateView,
+    TraineeUpdateView,
+    TraineeDeleteView,
+    UserRegisterView,
+    UserLoginView,
+    UserLogoutView,
+)
 
 urlpatterns = [
-    path('', trainee_list, name='trainee_list'), 
-    path('add/', add_trainee, name='add_trainee'), 
-    path('update/<int:trainee_id>/', update_trainee, name='update_trainee'), 
-    path('delete/<int:trainee_id>/', delete_trainee, name='delete_trainee'),  
+    path('register/', UserRegisterView.as_view(), name='register'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
+
+    path('trainees/', TraineeListView.as_view(), name='trainee_list'),
+    path('trainees/add/', TraineeCreateView.as_view(), name='add_trainee'),
+    path('trainees/<int:pk>/edit/', TraineeUpdateView.as_view(), name='update_trainee'),
+    path('trainees/<int:pk>/delete/', TraineeDeleteView.as_view(), name='delete_trainee'),
 ]

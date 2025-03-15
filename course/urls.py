@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import course_list, add_course, update_course, delete_course
+from .views import CourseListView, CourseCreateView, CourseUpdateView, CourseDeleteView
 
 urlpatterns = [
-    path('', course_list, name='course_list'),  
-    path('add/', add_course, name='add_course'),  
-    path('update/<int:course_id>/', update_course, name='update_course'), 
-    path('delete/<int:course_id>/', delete_course, name='delete_course'),  
+    path('', CourseListView.as_view(), name='course_list'),
+    path('add/', CourseCreateView.as_view(), name='add_course'),  # ✅ Matches 'add_course'
+    path('edit/<int:pk>/', CourseUpdateView.as_view(), name='update_course'),
+    path('delete/<int:pk>/', CourseDeleteView.as_view(), name='delete_course'),
 ]
