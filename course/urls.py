@@ -1,9 +1,10 @@
-from django.urls import path
-from .views import CourseListView, CourseCreateView, CourseUpdateView, CourseDeleteView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import CourseViewSet
+
+router = DefaultRouter()
+router.register(r'courses', CourseViewSet)  # This provides all CRUD endpoints
 
 urlpatterns = [
-    path('', CourseListView.as_view(), name='course_list'),
-    path('add/', CourseCreateView.as_view(), name='add_course'),  # ✅ Matches 'add_course'
-    path('edit/<int:pk>/', CourseUpdateView.as_view(), name='update_course'),
-    path('delete/<int:pk>/', CourseDeleteView.as_view(), name='delete_course'),
+    path('', include(router.urls)),  # API root for all course-related endpoints
 ]

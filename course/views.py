@@ -1,26 +1,23 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from .models import Course
+from .serializers import CourseSerializer
 
-class CourseListView(LoginRequiredMixin, ListView):
-    model = Course
-    template_name = 'course/list.html'
-    context_object_name = 'courses'
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
 
-class CourseCreateView(LoginRequiredMixin, CreateView):
-    model = Course
-    template_name = 'course/add.html'
-    fields = ['name', 'description']
-    success_url = reverse_lazy('course_list')
-
-class CourseUpdateView(LoginRequiredMixin, UpdateView):
-    model = Course
-    template_name = 'course/update.html'
-    fields = ['name', 'description']
-    success_url = reverse_lazy('course_list')
-
-class CourseDeleteView(LoginRequiredMixin, DeleteView):
-    model = Course
-    template_name = 'course/delete.html'
-    success_url = reverse_lazy('course_list')
+    @action(detail=True, methods=['put', 'patch'])
+    def update_course(self, request, pk=None):
+        """Custom update function for a specific course."""
+        try:
+            course = self.get_object()
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = CourseSerializer(course, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

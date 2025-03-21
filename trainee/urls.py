@@ -1,21 +1,21 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import (
-    TraineeListView,
-    TraineeCreateView,
-    TraineeUpdateView,
-    TraineeDeleteView,
-    UserRegisterView,
-    UserLoginView,
-    UserLogoutView,
+    ListTraineeView, 
+    AddTraineeView,  
+    UpdateTraineeView, 
+    DeleteTraineeView, 
+    track_update, 
+    TrackViewSet
 )
 
-urlpatterns = [
-    path('register/', UserRegisterView.as_view(), name='register'),
-    path('login/', UserLoginView.as_view(), name='login'),
-    path('logout/', UserLogoutView.as_view(), name='logout'),
+router = DefaultRouter()
+router.register(r'tracks', TrackViewSet, basename='track')
 
-    path('trainees/', TraineeListView.as_view(), name='trainee_list'),
-    path('trainees/add/', TraineeCreateView.as_view(), name='add_trainee'),
-    path('trainees/<int:pk>/edit/', TraineeUpdateView.as_view(), name='update_trainee'),
-    path('trainees/<int:pk>/delete/', TraineeDeleteView.as_view(), name='delete_trainee'),
-]
+urlpatterns = [
+    path('list/', ListTraineeView.as_view(), name='list-trainee'),  
+    path('add/', AddTraineeView.as_view(), name='add-trainee'),  
+    path('update/<int:pk>/', UpdateTraineeView.as_view(), name='update-trainee'),  
+    path('delete/<int:pk>/', DeleteTraineeView.as_view(), name='delete-trainee'),  
+    path('track/update/', track_update, name='track-update'),  
+] + router.urls

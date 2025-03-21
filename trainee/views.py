@@ -1,56 +1,54 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from .models import Trainee
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import generics, viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
+from django.views.generic import ListView
+from .models import Trainee, Track
+from .serializers import TraineeSerializer, TrackSerializer
 
-
-
-
-class UserRegisterView(CreateView):
-    form_class = UserCreationForm
-    template_name = 'trainee/register.html'
-    success_url = reverse_lazy('login')  
-
-
-class UserLoginView(LoginView):
-    template_name = 'trainee/login.html'
-
-
-class UserLogoutView(LogoutView):
-    next_page = 'login'  
-
-
-class TraineeListView(LoginRequiredMixin, ListView):
+class ListTraineeView(ListView):
     model = Trainee
-    template_name = 'trainee/list.html'
-    context_object_name = 'trainees'
+    template_name = "trainee_list.html"
 
-class TraineeListView(LoginRequiredMixin, ListView):
-    model = Trainee
-    template_name = 'trainee/list.html'
-    context_object_name = 'trainees'
+class TraineeListCreateView(APIView):
+    def get(self, request):
+        trainees = Trainee.objects.all()
+        serializer = TraineeSerializer(trainees, many=True)
+        return Response(serializer.data)
 
+    def post(self, request):
+        serializer = TraineeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class TraineeCreateView(LoginRequiredMixin, CreateView):
-    model = Trainee
-    template_name = 'trainee/add.html'
-    fields = ['name', 'email', 'phone', 'course']
-    success_url = reverse_lazy('trainee_list')
+class UpdateTraineeView(generics.UpdateAPIView):
+    queryset = Trainee.objects.all()
+    serializer_class = TraineeSerializer
 
+class DeleteTraineeView(generics.DestroyAPIView):
+    queryset = Trainee.objects.all()
+    serializer_class = TraineeSerializer
 
-class TraineeUpdateView(LoginRequiredMixin, UpdateView):
-    model = Trainee
-    template_name = 'trainee/edit.html'
-    fields = ['name', 'email', 'phone', 'course']
-    success_url = reverse_lazy('trainee_list')
+class AddTraineeView(generics.CreateAPIView):
+    queryset = Trainee.objects.all()
+    serializer_class = TraineeSerializer
 
+@api_view(['PUT'])
+def track_update(request, pk):
+    try:
+        track = Track.objects.get(pk=pk)
+    except Track.DoesNotExist:
+        return Response({"error": "Track not found"}, status=status.HTTP_404_NOT_FOUND)
 
-class TraineeDeleteView(LoginRequiredMixin, DeleteView):
-    model = Trainee
-    template_name = 'trainee/delete.html'
-    success_url = reverse_lazy('trainee_list')
+    serializer = TrackSerializer(track, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TrackViewSet(viewsets.ModelViewSet):
+    queryset = Track.objects.all()
+    serializer_class = TrackSerializer
